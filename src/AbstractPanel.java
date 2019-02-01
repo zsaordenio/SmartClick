@@ -5,53 +5,53 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Random;
 
-public class Activator extends JFrame {
+public abstract class AbstractPanel extends JPanel {
 
+    private JPanel topPanel, midPanel;
+    private JTextArea topText;
     private JButton jb;
+
     private boolean activated;
     private Thread t;
     private Robot rob;
     private Random random;
 
-    // 0 = x, 1 = y, 2 = timeout milliseconds
-    private static final int[][] data = {
-            {523, 267, 6750}, {338, 305, 7530}, {439, 470, 9400}, {548, 438, 5400},
-            {316, 416, 6090}, {527, 397, 4730}, {994, 87, 9160}, {632, 188, 5940},
-    };
+    private int[][] data;
 
-    private Activator() {
-        super("Smart Click!");
-        setup();
-        initFields();
-        addListener();
-    }
 
-    private void setup() {
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setResizable(false);
-        setLayout(new BorderLayout());
+    AbstractPanel(String title) {
+        super(new BorderLayout());
         setPreferredSize(new Dimension(400, 300));
-        setVisible(true);
-        pack();
+
+        generateTopPanel(title);
+        generateMidPanel();
+
+        add(BorderLayout.NORTH, topPanel);
+        add(BorderLayout.CENTER, midPanel);
+        repaint();
     }
 
-    private void initFields() {
-        JPanel jp = new JPanel();
-        jp.setPreferredSize(new Dimension(400, 300));
-        add(jp);
+    private void generateTopPanel(String title) {
+        topText = new JTextArea(title);
+        topText.setEditable(false);
+        topText.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 40));
+        topText.setForeground(Color.black);
+        topText.setBackground(Color.red);
 
+        topPanel = new JPanel();
+        topPanel.add(topText);
+    }
+
+
+    private void generateMidPanel() {
         jb = new JButton("Activate");
-        jb.setPreferredSize(new Dimension(400, 300));
         jb.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 40));
         jb.setForeground(Color.black);
         jb.setBackground(Color.red);
-        jp.add(jb);
 
-        activated = false;
-        try { rob = new Robot(); } catch (AWTException e) { e.printStackTrace(); }
-        random = new Random();
+        midPanel = new JPanel();
+        midPanel.add(jb);
     }
-
 
     private void addListener() {
         jb.addMouseListener(new MouseAdapter() {
@@ -89,9 +89,6 @@ public class Activator extends JFrame {
                 }
             }
         });
-    }
 
-    public static void main(String[] args) {
-        Activator activator = new Activator();
     }
 }
